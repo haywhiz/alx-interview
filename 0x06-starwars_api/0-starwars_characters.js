@@ -7,30 +7,38 @@ You must use the Star wars API
 You must use the module request
 */
 
-const request = require('request');
-const movieID = process.argv.slice(2);
-const endpoint = 'https://swapi-api.hbtn.io/api/films/' + movieID;
+const argv = process.argv;
+const urlFilm = 'https://swapi-api.hbtn.io/api/films/';
+const urlMovie = `${urlFilm}${argv[2]}/`;
 
-function makeRequest (array, index) {
-  if (index === array.length) {
+const request = require('request');
+
+request(urlMovie, function (error, response, body) {
+  if (error == null) {
+    const fbody = JSON.parse(body);
+    const characters = fbody.characters;
+
+    if (characters && characters.length > 0) {
+      const limit = characters.length;
+      CharRequest(0, characters[0], characters, limit);
+    }
+  } else {
+    console.log(error);
+  }
+});
+
+function CharRequest (idx, url, characters, limit) {
+  if (idx === limit) {
     return;
   }
-
-  request(array[index], (error, response, body) => {
-    if (error) {
-      console.log(error);
+  request(url, function (error, response, body) {
+    if (!error) {
+      const rbody = JSON.parse(body);
+      console.log(rbody.name);
+      idx++;
+      CharRequest(idx, characters[idx], characters, limit);
     } else {
-      console.log(JSON.parse(body).name);
-      makeRequest(array, index + 1);
+      console.error('error:', error);
     }
   });
 }
-
-request(endpoint, (error, response, body) => {
-  if (error) {
-    console.log(error);
-  } else {
-    const chrList = JSON.parse(body).characters;
-    makeRequest(chrList, 0);
-  }
-});
