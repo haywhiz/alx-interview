@@ -7,7 +7,6 @@ You must use the Star wars API
 You must use the module request
 */
 
-
 const argv = process.argv;
 const urlFilm = 'https://swapi-api.hbtn.io/api/films/';
 const urlMovie = `${urlFilm}${argv[2]}/`;
